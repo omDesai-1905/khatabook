@@ -45,8 +45,7 @@ function Dashboard({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetSideba
   };
 
   const handleProfile = () => {
-    // You can add profile page navigation here
-    showNotification('Profile feature coming soon!', 'info');
+    navigate('/profile');
     actualSetSidebarOpen(false);
   };
 

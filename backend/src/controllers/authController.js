@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../model/User.model");
 require("dotenv").config();
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 exports.signup = async (req, res) => {
   try {
@@ -118,5 +118,89 @@ exports.verifyToken = async (req, res) => {
     });
   } catch (error) {
     res.status(401).json({ valid: false, message: "Invalid token" });
+  }
+};
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+
+    const token = authHeader.substring(7); // Remove "Bearer " prefix
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    const { name, email, currentPassword, newPassword } = req.body;
+
+    // Validation
+    if (!name || !email) {
+      return res.status(400).json({ message: "Name and email are required" });
+    }
+
+    // Find the user
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if email is being changed and if it's already taken
+    if (email !== user.email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: "Email already in use" });
+      }
+    }
+
+    // If changing password, verify current password
+    if (newPassword) {
+      if (!currentPassword) {
+        return res
+          .status(400)
+          .json({ message: "Current password is required to change password" });
+      }
+
+      const isCurrentPasswordValid = await bcrypt.compare(
+        currentPassword,
+        user.password
+      );
+      if (!isCurrentPasswordValid) {
+        return res
+          .status(400)
+          .json({ message: "Current password is incorrect" });
+      }
+
+      if (newPassword.length < 6) {
+        return res
+          .status(400)
+          .json({ message: "New password must be at least 6 characters" });
+      }
+
+      // Hash new password
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedNewPassword;
+    }
+
+    // Update user fields
+    user.name = name;
+    user.email = email;
+
+    await user.save();
+
+    // Return updated user data
+    res.json({
+      message: "Profile updated successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt,
+      },
+    });
+  } catch (error) {
+    if (error.name === "JsonWebTokenError") {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };

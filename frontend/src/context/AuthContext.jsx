@@ -86,11 +86,17 @@ export function AuthProvider({ children }) {
     delete axios.defaults.headers.common['Authorization'];
   };
 
+  const updateUser = (userData) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
   const value = {
     user,
     signup,
     login,
     logout,
+    updateUser,
     loading
   };
 

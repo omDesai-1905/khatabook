@@ -10,6 +10,7 @@ const transactionSchema = new mongoose.Schema({
   type: { type: String, enum: ["debit", "credit"], required: true },
   amount: { type: Number, required: true },
   description: { type: String, required: true },
+  date: { type: Date, default: Date.now }, // Date of the transaction (can be set manually)
   createdAt: { type: Date, default: Date.now },
 });
 

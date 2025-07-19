@@ -80,12 +80,11 @@ exports.getCustomerTransactions = async (req, res) => {
 exports.addTransaction = async (req, res) => {
   try {
     const { id } = req.params;
-    const { type, amount, description } = req.body;
+    const { type, amount, description, date } = req.body;
 
-    if (!type || !amount || !description) {
-      return res
-        .status(400)
-        .json({ message: "Type, amount, and description are required" });
+    // if (!type || !amount || !description) {
+    if (!type || !amount) {
+      return res.status(400).json({ message: "Type, amount are required" });
     }
 
     if (type !== "debit" && type !== "credit") {
@@ -95,9 +94,7 @@ exports.addTransaction = async (req, res) => {
     }
 
     if (amount <= 0) {
-      return res
-        .status(400)
-        .json({ message: "Amount must be greater than 0" });
+      return res.status(400).json({ message: "Amount must be greater than 0" });
     }
 
     // Verify customer belongs to user
@@ -115,6 +112,7 @@ exports.addTransaction = async (req, res) => {
       type,
       amount: parseFloat(amount),
       description,
+      date: date ? new Date(date) : new Date(), // Use provided date or current date
     });
 
     await transaction.save();
@@ -145,7 +143,10 @@ exports.updateCustomer = async (req, res) => {
 exports.deleteCustomer = async (req, res) => {
   try {
     const { id } = req.params;
-    const customer = await Customer.findOneAndDelete({ _id: id, userId: req.user.userId });
+    const customer = await Customer.findOneAndDelete({
+      _id: id,
+      userId: req.user.userId,
+    });
     if (!customer) {
       return res.status(404).json({ message: "Customer not found" });
     }
@@ -160,15 +161,24 @@ exports.deleteCustomer = async (req, res) => {
 exports.updateTransaction = async (req, res) => {
   try {
     const { id, transactionId } = req.params;
-    const { type, amount, description } = req.body;
+    const { type, amount, description, date } = req.body;
     // Verify customer belongs to user
-    const customer = await Customer.findOne({ _id: id, userId: req.user.userId });
+    const customer = await Customer.findOne({
+      _id: id,
+      userId: req.user.userId,
+    });
     if (!customer) {
       return res.status(404).json({ message: "Customer not found" });
     }
+
+    const updateData = { type, amount, description };
+    if (date) {
+      updateData.date = new Date(date);
+    }
+
     const transaction = await Transaction.findOneAndUpdate(
       { _id: transactionId, customerId: id, userId: req.user.userId },
-      { type, amount, description },
+      updateData,
       { new: true }
     );
     if (!transaction) {
@@ -184,11 +194,18 @@ exports.deleteTransaction = async (req, res) => {
   try {
     const { id, transactionId } = req.params;
     // Verify customer belongs to user
-    const customer = await Customer.findOne({ _id: id, userId: req.user.userId });
+    const customer = await Customer.findOne({
+      _id: id,
+      userId: req.user.userId,
+    });
     if (!customer) {
       return res.status(404).json({ message: "Customer not found" });
     }
-    const transaction = await Transaction.findOneAndDelete({ _id: transactionId, customerId: id, userId: req.user.userId });
+    const transaction = await Transaction.findOneAndDelete({
+      _id: transactionId,
+      customerId: id,
+      userId: req.user.userId,
+    });
     if (!transaction) {
       return res.status(404).json({ message: "Transaction not found" });
     }

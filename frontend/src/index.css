@@ -247,6 +247,84 @@ body {
   background: #c53030;
 }
 
+/* Profile Component Styles */
+.profile-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.profile-header {
+  margin-bottom: 2rem;
+}
+
+.profile-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+.profile-view .profile-info {
+  margin-bottom: 2rem;
+}
+
+.profile-view .info-item {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f7fafc;
+}
+
+.profile-view .info-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.profile-view .info-item label {
+  display: block;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profile-view .info-item p {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #2d3748;
+  padding: 0.5rem 0;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Responsive design for profile */
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 1rem;
+  }
+  
+  .profile-card {
+    padding: 1.5rem;
+  }
+  
+  .profile-actions {
+    flex-direction: column;
+  }
+  
+  .profile-actions .btn {
+    width: 100%;
+    margin-right: 0 !important;
+  }
+}
+
 .auth-link {
   text-align: center;
   margin-top: 1rem;

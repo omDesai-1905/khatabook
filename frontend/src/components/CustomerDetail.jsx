@@ -16,7 +16,11 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
   const [modalType, setModalType] = useState('add');
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [transactionType, setTransactionType] = useState('debit');
-  const [newTransaction, setNewTransaction] = useState({ amount: '', description: '' });
+  const [newTransaction, setNewTransaction] = useState({ 
+    amount: '', 
+    description: '', 
+    date: new Date().toISOString().split('T')[0] // Default to today's date
+  });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [notification, setNotification] = useState(null);
@@ -50,20 +54,32 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
   };
 
   const handleProfile = () => {
-    showNotification('Profile feature coming soon!', 'info');
+    navigate('/profile');
     actualSetSidebarOpen(false);
   };
 
   const filteredTransactions = transactions.filter(transaction =>
     transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
     transaction.type.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ).sort((a, b) => {
+    const dateA = new Date(a.date || a.createdAt);
+    const dateB = new Date(b.date || b.createdAt);
+    return dateB - dateA; // Newest first
+  });
 
   const fetchCustomerData = async () => {
     try {
       const response = await axios.get(`/api/customers/${id}/transactions`);
       setCustomer(response.data.customer);
-      setTransactions(response.data.transactions);
+      
+      // Sort transactions by date (newest first), then by createdAt if date is not available
+      const sortedTransactions = response.data.transactions.sort((a, b) => {
+        const dateA = new Date(a.date || a.createdAt);
+        const dateB = new Date(b.date || b.createdAt);
+        return dateB - dateA; // Newest first
+      });
+      
+      setTransactions(sortedTransactions);
     } catch (error) {
       console.error('Error fetching customer data:', error);
       if (error.response?.status === 404) {
@@ -81,8 +97,16 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
       newErrors.amount = 'Amount must be greater than 0';
     }
 
-    if (!newTransaction.description.trim()) {
-      newErrors.description = 'Description is required';
+    if (!newTransaction.date) {
+      newErrors.date = 'Date is required';
+    } else {
+      const selectedDate = new Date(newTransaction.date);
+      const today = new Date();
+      today.setHours(23, 59, 59, 999); // Set to end of today
+      
+      if (selectedDate > today) {
+        newErrors.date = 'Date cannot be in the future';
+      }
     }
 
     setErrors(newErrors);
@@ -100,29 +124,53 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
 
     try {
       let response;
+      const description = newTransaction.description.trim() || 'NONE';
+      
       if (modalType === 'add') {
         response = await axios.post(`/api/customers/${id}/transactions`, {
           type: transactionType,
           amount: parseFloat(newTransaction.amount),
-          description: newTransaction.description.trim()
+          description: description,
+          date: newTransaction.date
         });
         
-        setTransactions(prev => [response.data, ...prev]);
+        // Add new transaction and re-sort the list
+        setTransactions(prev => {
+          const newTransactions = [response.data, ...prev];
+          return newTransactions.sort((a, b) => {
+            const dateA = new Date(a.date || a.createdAt);
+            const dateB = new Date(b.date || b.createdAt);
+            return dateB - dateA; // Newest first
+          });
+        });
       } else {
         response = await axios.put(`/api/customers/${id}/transactions/${selectedTransaction._id}`, {
           type: transactionType,
           amount: parseFloat(newTransaction.amount),
-          description: newTransaction.description.trim()
+          description: description,
+          date: newTransaction.date
         });
         
-        setTransactions(prev => prev.map(transaction => 
-          transaction._id === selectedTransaction._id 
-            ? response.data
-            : transaction
-        ));
+        // Update transaction and re-sort the list
+        setTransactions(prev => {
+          const updatedTransactions = prev.map(transaction => 
+            transaction._id === selectedTransaction._id 
+              ? response.data
+              : transaction
+          );
+          return updatedTransactions.sort((a, b) => {
+            const dateA = new Date(a.date || a.createdAt);
+            const dateB = new Date(b.date || b.createdAt);
+            return dateB - dateA; // Newest first
+          });
+        });
       }
       
-      setNewTransaction({ amount: '', description: '' });
+      setNewTransaction({ 
+        amount: '', 
+        description: '', 
+        date: new Date().toISOString().split('T')[0] 
+      });
       setSelectedTransaction(null);
       setErrors({});
       setShowModal(false);
@@ -137,7 +185,11 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
   const openTransactionModal = (type) => {
     setModalType('add');
     setTransactionType(type);
-    setNewTransaction({ amount: '', description: '' });
+    setNewTransaction({ 
+      amount: '', 
+      description: '', 
+      date: new Date().toISOString().split('T')[0] 
+    });
     setSelectedTransaction(null);
     setErrors({});
     setShowModal(true);
@@ -149,7 +201,8 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
     setTransactionType(transaction.type);
     setNewTransaction({ 
       amount: transaction.amount.toString(), 
-      description: transaction.description 
+      description: transaction.description,
+      date: transaction.date ? new Date(transaction.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
     });
     setErrors({});
     setShowModal(true);
@@ -214,9 +267,7 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
     return date.toLocaleDateString('en-IN', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+      day: 'numeric'
     });
   };
 
@@ -239,7 +290,7 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
   const balance = calculateBalance();
 
   return (
-    <div className="container">
+    <div className="container" style={{ marginBottom: '4rem' }}>
       {/* Sidebar */}
       <div className={`sidebar ${actualSidebarOpen ? 'sidebar-open' : ''}`}>
         <div className="sidebar-header">
@@ -399,7 +450,7 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
         </div>
 
       {/* Transactions Table */}
-      <div className="transactions-table">
+      <div className="transactions-table" style={{ paddingBottom: '3rem' }}>
           <h2 style={{ padding: '1.5rem 1.5rem 0', margin: 0, color: '#2d3748' }}>Transaction History</h2>
           
           {transactions.length === 0 ? (
@@ -434,8 +485,8 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
                       cursor: 'pointer'
                     }}
                   >
-                    <td>{formatDate(transaction.createdAt)}</td>
-                    <td>{transaction.description}</td>
+                    <td>{formatDate(transaction.date || transaction.createdAt)}</td>
+                    <td>{transaction.description || 'NONE'}</td>
                     <td>
                       <span className={transaction.type === 'debit' ? 'transaction-debit' : 'transaction-credit'}>
                         {transaction.type === 'debit' ? ' Debit' : ' Credit'}
@@ -448,6 +499,8 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
                 ))}
               </tbody>
             </table>
+            {/* Add spacing after transaction table */}
+            <div style={{ height: '2rem' }}></div>
             </>
           )}
         </div>
@@ -467,7 +520,11 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
                   className="modal-close"
                   onClick={() => {
                     setShowModal(false);
-                    setNewTransaction({ amount: '', description: '' });
+                    setNewTransaction({ 
+                      amount: '', 
+                      description: '', 
+                      date: new Date().toISOString().split('T')[0] 
+                    });
                     setSelectedTransaction(null);
                     setErrors({});
                   }}
@@ -505,6 +562,22 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
                 )}
 
                 <div className="form-group">
+                  <label htmlFor="date" className="form-label">Date</label>
+                  <input
+                    type="date"
+                    id="date"
+                    value={newTransaction.date}
+                    onChange={(e) => {
+                      setNewTransaction(prev => ({ ...prev, date: e.target.value }));
+                      if (errors.date) setErrors(prev => ({ ...prev, date: '' }));
+                    }}
+                    className={`form-input ${errors.date ? 'error' : ''}`}
+                    max={new Date().toISOString().split('T')[0]} // Prevent future dates
+                  />
+                  {errors.date && <div className="error-message">{errors.date}</div>}
+                </div>
+
+                <div className="form-group">
                   <label htmlFor="amount" className="form-label">Amount (₹)</label>
                   <input
                     type="number"
@@ -523,7 +596,7 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="description" className="form-label">Description</label>
+                  <label htmlFor="description" className="form-label">Description (Optional)</label>
                   <textarea
                     id="description"
                     rows="2"
@@ -533,7 +606,7 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
                       if (errors.description) setErrors(prev => ({ ...prev, description: '' }));
                     }}
                     className={`form-input ${errors.description ? 'error' : ''}`}
-                    placeholder={`Enter ${transactionType} description`}
+                    placeholder={`Enter ${transactionType} description (optional - will show 'NONE' if empty)`}
                     style={{ resize: 'vertical', minHeight: '80px' }}
                   />
                   {errors.description && <div className="error-message">{errors.description}</div>}
@@ -544,7 +617,11 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
                     type="button"
                     onClick={() => {
                       setShowModal(false);
-                      setNewTransaction({ amount: '', description: '' });
+                      setNewTransaction({ 
+                        amount: '', 
+                        description: '', 
+                        date: new Date().toISOString().split('T')[0] 
+                      });
                       setSelectedTransaction(null);
                       setErrors({});
                     }}
@@ -597,7 +674,7 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
                     <strong>Amount:</strong> ₹{selectedTransaction.amount?.toLocaleString()}
                   </p>
                   <p style={{ margin: '0' }}>
-                    <strong>Description:</strong> {selectedTransaction.description}
+                    <strong>Description:</strong> {selectedTransaction.description || 'NONE'}
                   </p>
                 </div>
 

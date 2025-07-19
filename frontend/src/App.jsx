@@ -5,6 +5,7 @@ import Signup from './components/Signup';
 import Login from './components/Login';
 import DashboardWrapper from './components/DashboardWrapper';
 import CustomerDetailWrapper from './components/CustomerDetailWrapper';
+import Profile from './components/Profile';
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth();
@@ -51,6 +52,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <DashboardWrapper />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               } 
             />
