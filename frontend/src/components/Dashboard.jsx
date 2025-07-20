@@ -15,7 +15,7 @@ function Dashboard({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetSideba
   const [notification, setNotification] = useState(null); // For custom notifications
   const [showConfirmModal, setShowConfirmModal] = useState(false); // Confirmation modal
   const [customerToDelete, setCustomerToDelete] = useState(null); // Customer to delete
-  const [sidebarOpen, setSidebarOpen] = useState(false); // Sidebar state (fallback for when not provided)
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Sidebar state 
   const [searchTerm, setSearchTerm] = useState(''); // Search functionality
   
   // Use props if provided, otherwise use local state
@@ -25,7 +25,7 @@ function Dashboard({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetSideba
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  // Auto-hide notification after 3 seconds
+  
   useEffect(() => {
     if (notification) {
       const timer = setTimeout(() => {
@@ -49,7 +49,7 @@ function Dashboard({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetSideba
     actualSetSidebarOpen(false);
   };
 
-  // Filter customers based on search term
+  // Filter customers
   const filteredCustomers = customers.filter(customer =>
     customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     customer.phone.includes(searchTerm)
@@ -105,8 +105,7 @@ function Dashboard({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetSideba
           name: newCustomer.name.trim(),
           phone: newCustomer.phone.trim()
         });
-        
-        // Add new customer to the list with balance 0
+
         setCustomers(prev => [...prev, { ...response.data, balance: 0 }]);
       } else {
         response = await axios.put(`/api/customers/${selectedCustomer._id}`, {
@@ -144,7 +143,7 @@ function Dashboard({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetSideba
   };
 
   const openEditModal = (customer, e) => {
-    e.stopPropagation(); // Prevent row click
+    e.stopPropagation(); 
     setModalType('edit');
     setSelectedCustomer(customer);
     setNewCustomer({ name: customer.name, phone: customer.phone });
@@ -153,7 +152,7 @@ function Dashboard({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetSideba
   };
 
   const handleDeleteCustomer = async (customer, e) => {
-    e.stopPropagation(); // Prevent row click
+    e.stopPropagation();
     setCustomerToDelete(customer);
     setShowConfirmModal(true);
   };
@@ -169,7 +168,7 @@ function Dashboard({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetSideba
       setShowConfirmModal(false);
       setCustomerToDelete(null);
       
-      // Show success notification
+      //success notification
       showNotification(`Customer "${customerToDelete.name}" deleted successfully`, 'success');
     } catch (error) {
       console.error('Error deleting customer:', error);
@@ -322,12 +321,14 @@ function Dashboard({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetSideba
       <div className="dashboard">
         <div className="dashboard-header">
           <h1 className="dashboard-title">Customer List</h1>
-          <button 
-            onClick={openAddModal}
-            className="btn btn-primary"
-          >
-            + Add New Customer
-          </button>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <button 
+              onClick={openAddModal}
+              className="btn btn-primary"
+            >
+              + Add New Customer
+            </button>
+          </div>
         </div>
 
         {customers.length === 0 ? (
