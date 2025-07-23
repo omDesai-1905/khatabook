@@ -426,8 +426,8 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
             <span style={{ fontSize: '1.1rem', color: '#718096' }}>Current Balance: </span>
             <span className={`${balance > 0 ? 'balance-positive' : balance < 0 ? 'balance-negative' : ''}`} style={{ fontSize: '1.3rem', fontWeight: '600' }}>
               {formatAmount(Math.abs(balance))}
-              {balance > 0 && ' (You will get)'}
-              {balance < 0 && ' (You will give)'}
+              {balance > 0 && ' (You will give)'}
+              {balance < 0 && ' (You will get)'}
               {balance === 0 && ' (No balance)'}
             </span>
           </div>

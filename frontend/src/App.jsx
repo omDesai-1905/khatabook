@@ -6,6 +6,7 @@ import Login from './components/Login';
 import DashboardWrapper from './components/DashboardWrapper';
 import CustomerDetailWrapper from './components/CustomerDetailWrapper';
 import Profile from './components/Profile';
+import Analytics from './components/Analytics';
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth();
@@ -60,6 +61,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/analytics" 
+              element={
+                <ProtectedRoute>
+                  <Analytics />
                 </ProtectedRoute>
               } 
             />

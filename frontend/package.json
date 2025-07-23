@@ -1,5 +1,5 @@
 {
-  "name": "khatabook-frontend",
+  "name": "smarthisab-frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -13,7 +13,8 @@
     "axios": "^1.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.15.0"
+    "react-router-dom": "^6.15.0",
+    "recharts": "^3.1.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

@@ -192,8 +192,8 @@ function Dashboard({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetSideba
   };
 
   const getBalanceText = (balance) => {
-    if (balance > 0) return 'You will get';
-    if (balance < 0) return 'You will give';
+    if (balance > 0) return 'You will give';
+    if (balance < 0) return 'You will get';
     return 'No balance';
   };
 
@@ -210,7 +210,14 @@ function Dashboard({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetSideba
       {/* Sidebar */}
       <div className={`sidebar ${actualSidebarOpen ? 'sidebar-open' : ''}`}>
         <div className="sidebar-header">
-          <h3>Khatabook</h3>
+          <h3 style={{ 
+            fontFamily: 'Georgia, "Times New Roman", serif',
+            fontWeight: 'bold',
+            color: '#2563eb',
+            textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
+            letterSpacing: '0.5px',
+            margin: 0
+          }}>SmartHisab</h3>
           <button 
             className="sidebar-close"
             onClick={() => actualSetSidebarOpen(false)}
@@ -242,6 +249,16 @@ function Dashboard({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetSideba
               }}
             >
               🏠 Dashboard
+            </button>
+            
+            <button 
+              className="sidebar-nav-item"
+              onClick={() => {
+                navigate('/analytics');
+                actualSetSidebarOpen(false);
+              }}
+            >
+              📊 Analytics
             </button>
             
             <button 
@@ -323,8 +340,27 @@ function Dashboard({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetSideba
           <h1 className="dashboard-title">Customer List</h1>
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
             <button 
+              onClick={() => navigate('/analytics')}
+              className="btn btn-primary"
+              style={{
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                border: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                transition: 'transform 0.2s ease'
+              }}
+            >
+              📊 View Analytics
+            </button>
+            <button 
               onClick={openAddModal}
               className="btn btn-primary"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}
             >
               + Add New Customer
             </button>

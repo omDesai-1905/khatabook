@@ -24,8 +24,15 @@ function Navbar({ onToggleSidebar }) {
                 ☰
               </button>
             )}
-            <div className="navbar-brand">
-              Khatabook
+            <div className="navbar-brand" style={{ 
+              fontFamily: 'Georgia, "Times New Roman", serif',
+              fontWeight: 'bold',
+              fontSize: '1.5rem',
+              color: '#2563eb',
+              textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
+              letterSpacing: '0.5px'
+            }}>
+              SmartHisab
             </div>
           </div>
           
