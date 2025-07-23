@@ -1,7 +1,7 @@
 {
-  "name": "khatabook-backend",
+  "name": "smarthisab-backend",
   "version": "1.0.0",
-  "description": "Khatabook backend API",
+  "description": "SmartHisab backend API",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

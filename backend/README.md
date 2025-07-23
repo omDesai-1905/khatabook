@@ -1,6 +1,6 @@
-# Khatabook - Digital Ledger Application
+# SmartHisab - Digital Ledger Application
 
-A complete digital khatabook (accounting ledger) application built with React (Vite) frontend and Node.js backend.
+A complete digital hisab (accounting ledger) application built with React (Vite) frontend and Node.js backend.
 
 ## Features
 
@@ -14,6 +14,7 @@ A complete digital khatabook (accounting ledger) application built with React (V
 ## Tech Stack
 
 ### Frontend
+
 - React 18
 - Vite
 - React Router DOM
@@ -21,6 +22,7 @@ A complete digital khatabook (accounting ledger) application built with React (V
 - Modern CSS with responsive design
 
 ### Backend
+
 - Node.js
 - Express.js
 - MongoDB with Mongoose
@@ -30,10 +32,12 @@ A complete digital khatabook (accounting ledger) application built with React (V
 ## Setup Instructions
 
 ### Prerequisites
+
 1. Node.js (v14 or higher)
 2. MongoDB (local installation or MongoDB Atlas)
 
 ### Backend Setup
+
 1. Navigate to the project root directory
 2. Install dependencies:
    ```bash
@@ -47,6 +51,7 @@ A complete digital khatabook (accounting ledger) application built with React (V
    The backend will run on http://localhost:5000
 
 ### Frontend Setup
+
 1. Navigate to the frontend directory:
    ```bash
    cd frontend
@@ -73,14 +78,17 @@ A complete digital khatabook (accounting ledger) application built with React (V
 ## API Endpoints
 
 ### Authentication
+
 - `POST /api/signup` - User registration
 - `POST /api/login` - User login
 
 ### Customers
+
 - `GET /api/customers` - Get all customers with balances
 - `POST /api/customers` - Create new customer
 
 ### Transactions
+
 - `GET /api/customers/:id/transactions` - Get customer transactions
 - `POST /api/customers/:id/transactions` - Add new transaction
 
@@ -101,12 +109,14 @@ A complete digital khatabook (accounting ledger) application built with React (V
 ## Development
 
 For development, you can use:
+
 - Backend: `npm run dev` (uses nodemon for auto-restart)
 - Frontend: `npm run dev` (Vite dev server with hot reload)
 
 ## Note
 
 Make sure MongoDB is running before starting the backend server. If you don't have MongoDB installed locally, you can:
+
 1. Install MongoDB Community Edition
 2. Use MongoDB Atlas (cloud)
 3. Use Docker: `docker run -d -p 27017:27017 mongo`
