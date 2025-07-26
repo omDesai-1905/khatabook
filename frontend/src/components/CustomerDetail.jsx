@@ -72,7 +72,7 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
       const response = await axios.get(`/api/customers/${id}/transactions`);
       setCustomer(response.data.customer);
       
-      // Sort transactions by date (newest first), then by createdAt if date is not available
+      // Sort transactions by date
       const sortedTransactions = response.data.transactions.sort((a, b) => {
         const dateA = new Date(a.date || a.createdAt);
         const dateB = new Date(b.date || b.createdAt);
@@ -134,7 +134,7 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
           date: newTransaction.date
         });
         
-        // Add new transaction and re-sort the list
+        // Add new transaction and re sort the list
         setTransactions(prev => {
           const newTransactions = [response.data, ...prev];
           return newTransactions.sort((a, b) => {
@@ -151,7 +151,7 @@ function CustomerDetail({ sidebarOpen: propSidebarOpen, setSidebarOpen: propSetS
           date: newTransaction.date
         });
         
-        // Update transaction and re-sort the list
+        // Update transaction and re sort the list
         setTransactions(prev => {
           const updatedTransactions = prev.map(transaction => 
             transaction._id === selectedTransaction._id 

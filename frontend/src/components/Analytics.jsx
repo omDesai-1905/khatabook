@@ -199,7 +199,7 @@ function Analytics() {
           <>
             {/* Enhanced Overall Summary */}
             <div style={{ 
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: '#269bb9',
               borderRadius: '16px',
               padding: '2.5rem',
               marginBottom: '2rem',
@@ -223,12 +223,12 @@ function Analytics() {
               }}>
                 {/* Total Customers */}
                 <div style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
+                  background: 'rgba(255, 255, 255, 0.25)',
                   borderRadius: '12px',
                   padding: '2rem',
                   textAlign: 'center',
                   backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  border: '2px solid rgba(255, 255, 255, 0.3)',
                   transition: 'transform 0.3s ease',
                   cursor: 'pointer'
                 }}>
@@ -241,18 +241,18 @@ function Analytics() {
                   </div>
                 </div>
 
-                {/* Total Debit Amount */}
+                {/* Debit Amount box */}
                 <div style={{
-                  background: 'rgba(239, 68, 68, 0.25)',
+                  background: 'rgba(251, 146, 60, 0.3)',
                   borderRadius: '12px',
                   padding: '2rem',
                   textAlign: 'center',
                   backdropFilter: 'blur(10px)',
-                  border: '2px solid rgba(239, 68, 68, 0.4)',
+                  border: '2px solid rgba(251, 146, 60, 0.5)',
                   transition: 'transform 0.3s ease',
                   cursor: 'pointer'
                 }}>
-                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>�</div>
+                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📉</div>
                   <div style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
                     ₹{summary.totalDebit.toLocaleString()}
                   </div>
@@ -261,14 +261,14 @@ function Analytics() {
                   </div>
                 </div>
 
-                {/* Total Credit Amount */}
+                {/* Credit Amount box*/}
                 <div style={{
-                  background: 'rgba(34, 197, 94, 0.25)',
+                  background: 'rgba(72, 187, 120, 0.3)',
                   borderRadius: '12px',
                   padding: '2rem',
                   textAlign: 'center',
                   backdropFilter: 'blur(10px)',
-                  border: '2px solid rgba(34, 197, 94, 0.4)',
+                  border: '2px solid rgba(72, 187, 120, 0.5)',
                   transition: 'transform 0.3s ease',
                   cursor: 'pointer'
                 }}>
@@ -283,7 +283,7 @@ function Analytics() {
               </div>
             </div>
 
-            {/* Top Customers Section */}
+            {/* Top Customers */}
             <div style={{ 
               display: 'grid', 
               gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
