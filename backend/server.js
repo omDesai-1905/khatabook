@@ -1,10 +1,11 @@
-const express = require("express");
-const cors = require("cors");
-require("dotenv").config();
+import express from "express";
+import dotenv from "dotenv";
+import authenticateToken from "./src/middlewares/authMiddleware.js";
+import connectDB from "./src/connection/mongoConnection.js";
+import authRoutes from "./src/routes/authRoutes.js";
+import customerRoutes from "./src/routes/customerRoutes.js";
 
-const connectDB = require("./src/connection/mongoConnection.js");
-const authRoutes = require("./src/routes/authRoutes");
-const customerRoutes = require("./src/routes/customerRoutes");
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -12,16 +13,14 @@ const PORT = process.env.PORT || 5000;
 // Connect to MongoDB
 connectDB();
 
-// Middleware
-app.use(cors());
 app.use(express.json());
 
 // Routes
 app.use("/api", authRoutes);
-app.use("/api/customers", customerRoutes);
+app.use("/api/customers", authenticateToken, customerRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-module.exports = app;
+export default app;

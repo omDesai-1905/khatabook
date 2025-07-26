@@ -1,24 +1,15 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const User = require("../model/User.model");
-require("dotenv").config();
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import User from "../model/User.model.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-exports.signup = async (req, res) => {
+export const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-
-    // Validation
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-
-    if (password.length < 6) {
-      return res
-        .status(400)
-        .json({ message: "Password must be at least 6 characters" });
-    }
 
     // Check if user exists
     const existingUser = await User.findOne({ email });
@@ -44,16 +35,9 @@ exports.signup = async (req, res) => {
   }
 };
 
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    // Validation
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Email and password are required" });
-    }
 
     // Find user
     const user = await User.findOne({ email });
@@ -87,7 +71,7 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.verifyToken = async (req, res) => {
+export const verifyToken = async (req, res) => {
   try {
     const token = req.header("Authorization");
 
@@ -121,7 +105,7 @@ exports.verifyToken = async (req, res) => {
   }
 };
 
-exports.updateProfile = async (req, res) => {
+export const updateProfile = async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -132,11 +116,6 @@ exports.updateProfile = async (req, res) => {
     const decoded = jwt.verify(token, JWT_SECRET);
 
     const { name, email, currentPassword, newPassword } = req.body;
-
-    // Validation
-    if (!name || !email) {
-      return res.status(400).json({ message: "Name and email are required" });
-    }
 
     // Find the user
     const user = await User.findById(decoded.userId);
@@ -168,12 +147,6 @@ exports.updateProfile = async (req, res) => {
         return res
           .status(400)
           .json({ message: "Current password is incorrect" });
-      }
-
-      if (newPassword.length < 6) {
-        return res
-          .status(400)
-          .json({ message: "New password must be at least 6 characters" });
       }
 
       // Hash new password
